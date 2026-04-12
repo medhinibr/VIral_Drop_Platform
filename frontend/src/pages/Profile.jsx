@@ -1,12 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { useAppContext } from '../context/AppContext';
+import { Link } from 'react-router-dom';
 import { apiService } from '../services/api';
 import UploadImage from '../components/UploadImage';
 import { User, Image as ImageIcon, MapPin, Calendar, Clock } from 'lucide-react';
 import { motion } from 'framer-motion';
 
 const Profile = () => {
-  const { userId, userName } = useAppContext();
+  const { userId, userName, isAuthenticated } = useAppContext();
   const [profileImage, setProfileImage] = useState(null);
   const [claimedEvents, setClaimedEvents] = useState([]);
   const [authoredEvents, setAuthoredEvents] = useState([]);
@@ -34,6 +35,18 @@ const Profile = () => {
     setProfileImage(imageUrl);
     // Profile images are now strictly session-based until a backend schema supports it
   };
+
+  if (!isAuthenticated) {
+    return (
+      <div className="max-w-2xl mx-auto px-6 py-32 w-full flex flex-col items-center justify-center text-center animate-fade-in">
+        <h2 className="text-4xl mb-4 font-serif text-museum-dark">Membership Required</h2>
+        <p className="text-museum-text/60 max-w-md mx-auto mb-8">
+          Please verify your identity to access your personal collection dossier and records.
+        </p>
+        <Link to="/auth" className="btn-museum">Authenticate Now</Link>
+      </div>
+    );
+  }
 
   return (
     <div className="max-w-4xl mx-auto px-6 py-12 w-full">
