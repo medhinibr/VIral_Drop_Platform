@@ -87,13 +87,12 @@ app.get("/active-campaign", async (req, res) => {
 });
 
 
-app.post("/claim", async (req, res) => {
-    try {
-        const { campaignId, userId } = req.body;
+const verifyUser = require("./middleware/auth");
 
-        if (!userId) {
-            return res.status(400).send("User ID required");
-        }
+app.post("/claim", verifyUser, async (req, res) => {
+    try {
+        const campaignId = req.body.campaignId;
+        const userId = req.user.uid; // ✅ real user
 
         const campaign = await Campaign.findById(campaignId);
 
@@ -101,22 +100,18 @@ app.post("/claim", async (req, res) => {
             return res.status(404).send("Campaign not found");
         }
 
-        // ✅ Check start time
         if (new Date() < new Date(campaign.startTime)) {
             return res.status(400).send("Campaign not started yet");
         }
 
-        // ✅ Check duplicate claim
         if (campaign.claimedUsers.includes(userId)) {
             return res.status(400).send("Already claimed");
         }
 
-        // ✅ Check limit
         if (campaign.claimed >= campaign.limit) {
             return res.status(400).send("Sold Out");
         }
 
-        // ✅ Update
         campaign.claimed += 1;
         campaign.claimedUsers.push(userId);
 
