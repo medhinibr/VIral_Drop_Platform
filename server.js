@@ -151,8 +151,8 @@ const path = require("path");
 
 app.use(express.static(path.join(__dirname, "frontend", "dist")));
 
-// Catch-all route for React Router (Single Page Application)
-app.get("(.*)", (req, res) => {
+// Catch-all route for React Router (Express 5 Safe)
+app.use((req, res) => {
     res.sendFile(path.join(__dirname, "frontend", "dist", "index.html"));
 });
 
