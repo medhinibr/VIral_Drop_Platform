@@ -45,6 +45,8 @@ const CreateCampaign = () => {
     try {
       await apiService.createCampaign({
         ...formData,
+        startTime: new Date(formData.startTime).toISOString(),
+        eventDate: new Date(formData.eventDate).toISOString(),
         limit: parseInt(formData.limit, 10)
       });
       setSuccess(true);
