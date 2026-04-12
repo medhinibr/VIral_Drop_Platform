@@ -50,9 +50,9 @@ app.get("/test-campaign", async (req, res) => {
 
 app.post("/create-campaign", async (req, res) => {
     try {
-        const { title, limit, startTime } = req.body;
+        const { title, limit, startTime, eventDate } = req.body;
 
-        if (!title || !limit || !startTime) {
+        if (!title || !limit || !startTime || !eventDate) {
             return res.status(400).send("All fields are required");
         }
 
@@ -60,6 +60,7 @@ app.post("/create-campaign", async (req, res) => {
             title,
             limit,
             startTime,
+            eventDate,
         });
 
         res.send({

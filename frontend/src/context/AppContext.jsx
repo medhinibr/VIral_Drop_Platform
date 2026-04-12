@@ -6,6 +6,7 @@ const AppContext = createContext();
 
 export const AppProvider = ({ children }) => {
   const [userId, setUserId] = useState('');
+  const [userName, setUserName] = useState('');
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [loading, setLoading] = useState(true);
 
@@ -14,9 +15,11 @@ export const AppProvider = ({ children }) => {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
       if (user) {
         setUserId(user.uid);
+        setUserName(user.displayName || 'Collector');
         setIsAuthenticated(true);
       } else {
         setUserId('');
+        setUserName('');
         setIsAuthenticated(false);
       }
       setLoading(false);
@@ -34,7 +37,7 @@ export const AppProvider = ({ children }) => {
   };
 
   return (
-    <AppContext.Provider value={{ userId, isAuthenticated, logout }}>
+    <AppContext.Provider value={{ userId, userName, isAuthenticated, logout }}>
       {!loading && children}
     </AppContext.Provider>
   );

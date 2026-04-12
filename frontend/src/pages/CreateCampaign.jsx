@@ -8,7 +8,8 @@ const CreateCampaign = () => {
   const [formData, setFormData] = useState({
     title: '',
     limit: '',
-    startTime: ''
+    startTime: '',
+    eventDate: ''
   });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
@@ -111,7 +112,7 @@ const CreateCampaign = () => {
 
           <div className="space-y-2">
             <label className="block text-xs font-semibold tracking-widest uppercase text-museum-dark/70 mb-2">
-              Opening Time
+              Booking Opens On
             </label>
             <div className="relative">
               <Calendar className="absolute left-0 top-1/2 -translate-y-1/2 w-5 h-5 text-museum-dark/30" />
@@ -124,6 +125,23 @@ const CreateCampaign = () => {
                 className="input-museum pl-8 text-lg font-mono text-museum-dark/80"
               />
             </div>
+          </div>
+        </div>
+
+        <div className="space-y-2 border-t border-museum-dark/10 pt-6">
+          <label className="block text-xs font-semibold tracking-widest uppercase text-museum-dark/70 mb-2">
+            Actual Event Date
+          </label>
+          <div className="relative">
+            <Calendar className="absolute left-0 top-1/2 -translate-y-1/2 w-5 h-5 text-museum-dark/30" />
+            <input
+              type="datetime-local"
+              name="eventDate"
+              value={formData.eventDate}
+              onChange={handleChange}
+              required
+              className="input-museum pl-8 text-lg font-mono text-museum-dark/80"
+            />
           </div>
         </div>
 

@@ -28,6 +28,15 @@
     @apply w-full bg-transparent border-b border-museum-dark/20 text-museum-text px-1 py-2 focus:outline-none focus:border-museum-dark transition-colors duration-300 placeholder:text-museum-text/40;
   }
   
+  /* Prevent browser autofill from overwriting input colors and breaking contrast */
+  input:-webkit-autofill,
+  input:-webkit-autofill:hover, 
+  input:-webkit-autofill:focus, 
+  input:-webkit-autofill:active{
+      -webkit-box-shadow: 0 0 0 30px transparent inset !important;
+      transition: background-color 5000s ease-in-out 0s;
+  }
+  
   /* Card */
   .card-museum {
     @apply bg-museum-light shadow-xl shadow-black/5 p-8 border border-museum-dark/5;

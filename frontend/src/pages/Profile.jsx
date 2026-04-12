@@ -6,7 +6,7 @@ import { User, Image as ImageIcon, MapPin, Calendar, Clock } from 'lucide-react'
 import { motion } from 'framer-motion';
 
 const Profile = () => {
-  const { userId } = useAppContext();
+  const { userId, userName } = useAppContext();
   const [profileImage, setProfileImage] = useState(null);
   const [claimedEvents, setClaimedEvents] = useState([]);
 
@@ -65,8 +65,8 @@ const Profile = () => {
             </div>
             
             <div className="p-6 bg-museum-light">
-              <h3 className="font-serif text-xl mb-1 truncate text-museum-dark" title={userId}>
-                {userId}
+              <h3 className="font-serif text-xl mb-1 truncate text-museum-dark" title={userName}>
+                {userName}
               </h3>
               <p className="text-xs uppercase tracking-widest text-museum-accent font-medium mb-6">
                 Premium Member

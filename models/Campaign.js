@@ -17,6 +17,10 @@ const campaignSchema = new mongoose.Schema({
         type: Date,
         required: true,
     },
+    eventDate: {
+        type: Date,
+        required: true,
+    },
     createdAt: {
         type: Date,
         default: Date.now,

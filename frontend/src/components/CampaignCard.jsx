@@ -3,9 +3,11 @@ import { motion } from 'framer-motion';
 import ClaimButton from './ClaimButton';
 
 const CampaignCard = ({ campaign, onClaim, claiming, claimedCampaigns }) => {
-  const isSoldOut = campaign.claimedCount >= campaign.limit;
+  const currentClaimed = campaign.claimed || 0;
+  const isSoldOut = currentClaimed >= campaign.limit;
   const isClaimedByUser = claimedCampaigns?.includes(campaign._id);
-  const remaining = campaign.limit - campaign.claimedCount;
+  const isNotStarted = new Date() < new Date(campaign.startTime);
+  const remaining = campaign.limit - currentClaimed;
 
   return (
     <motion.div
@@ -38,6 +40,16 @@ const CampaignCard = ({ campaign, onClaim, claiming, claimedCampaigns }) => {
         </h3>
 
         <div className="mt-auto space-y-4">
+          <div className="border-b border-museum-dark/10 pb-4 mb-4">
+            <div className="flex justify-between text-[10px] uppercase tracking-wider text-museum-text/50 mb-1">
+              <span>Booking Opens</span>
+              <span>Event Date</span>
+            </div>
+            <div className="flex justify-between font-serif text-sm text-museum-dark">
+              <span>{new Date(campaign.startTime).toLocaleDateString()}</span>
+              <span>{campaign.eventDate ? new Date(campaign.eventDate).toLocaleDateString() : 'TBA'}</span>
+            </div>
+          </div>
           <div className="flex justify-between items-end border-b border-museum-dark/10 pb-4">
             <div>
               <p className="text-xs uppercase tracking-wider text-museum-text/50 mb-1">Edition Size</p>
@@ -53,10 +65,11 @@ const CampaignCard = ({ campaign, onClaim, claiming, claimedCampaigns }) => {
 
           <ClaimButton
             onClick={() => onClaim(campaign._id)}
-            disabled={isSoldOut || isClaimedByUser || claiming === campaign._id}
+            disabled={isSoldOut || isClaimedByUser || claiming === campaign._id || isNotStarted}
             loading={claiming === campaign._id}
             isClaimed={isClaimedByUser}
             isSoldOut={isSoldOut}
+            isNotStarted={isNotStarted}
           />
         </div>
       </div>

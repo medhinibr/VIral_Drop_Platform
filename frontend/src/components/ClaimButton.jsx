@@ -1,10 +1,11 @@
 import React from 'react';
 import { Loader2 } from 'lucide-react';
 
-const ClaimButton = ({ onClick, disabled, loading, isClaimed, isSoldOut }) => {
+const ClaimButton = ({ onClick, disabled, loading, isClaimed, isSoldOut, isNotStarted }) => {
   let buttonText = "Reserve Entry";
   if (loading) buttonText = "Reserving...";
   else if (isClaimed) buttonText = "Reservation Confirmed";
+  else if (isNotStarted) buttonText = "Booking Not Started";
   else if (isSoldOut) buttonText = "Capacity Reached";
 
   return (
