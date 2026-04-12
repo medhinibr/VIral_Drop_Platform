@@ -8,10 +8,12 @@ app.use(express.json());
 
 // Removed temporary root route to allow React's index.html to serve at /
 
-const PORT = process.env.PORT || 3000;
+// Render assigns external ports dynamically
+const PORT = process.env.PORT || 10000;
 
-app.listen(PORT, () => {
-    console.log(`Server running on port ${PORT}`);
+// Binding to 0.0.0.0 ensures it runs publicly, not on localhost
+app.listen(PORT, "0.0.0.0", () => {
+    console.log(`Server successfully live and securely bound to external port ${PORT}`);
 });
 
 
