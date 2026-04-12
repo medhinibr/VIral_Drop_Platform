@@ -9,6 +9,7 @@ const Profile = () => {
   const { userId, userName } = useAppContext();
   const [profileImage, setProfileImage] = useState(null);
   const [claimedEvents, setClaimedEvents] = useState([]);
+  const [authoredEvents, setAuthoredEvents] = useState([]);
 
   useEffect(() => {
     const fetchProfileData = async () => {
@@ -16,7 +17,9 @@ const Profile = () => {
         const data = await apiService.getActiveCampaign();
         const campaignsArray = Array.isArray(data) ? data : (data ? [data] : []);
         const claimed = campaignsArray.filter(c => c.claimedUsers?.includes(userId)).map(c => c._id);
+        const authored = campaignsArray.filter(c => c.createdBy === userId).map(c => c.title);
         setClaimedEvents(claimed);
+        setAuthoredEvents(authored);
       } catch (error) {
         console.error("Failed to fetch profile data", error);
       }
@@ -144,6 +147,37 @@ const Profile = () => {
                   Visit the gallery to secure your access to upcoming limited exhibitions.
                 </p>
               </div>
+            )}
+            
+            <h4 className="text-sm font-semibold uppercase tracking-widest text-museum-dark mt-10 mb-6 border-b border-museum-dark/10 pb-2 flex justify-between items-end">
+              <span>Curated Exhibitions</span>
+              <span className="text-xs font-normal text-museum-text/50">{authoredEvents.length} Published</span>
+            </h4>
+            
+            {authoredEvents.length > 0 ? (
+              <div className="space-y-4">
+                {authoredEvents.map((title, index) => (
+                  <motion.div 
+                    initial={{ opacity: 0, x: 20 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{ delay: 0.1 * index }}
+                    key={`auth-${index}`} 
+                    className="group bg-museum-dark text-museum-paper border border-museum-dark/10 p-5 flex flex-col sm:flex-row justify-between items-start sm:items-center hover:shadow-md transition-all duration-300 relative overflow-hidden"
+                  >
+                    <div className="absolute left-0 top-0 bottom-0 w-1 bg-museum-accent scale-y-0 group-hover:scale-y-100 transition-transform duration-300 origin-top"></div>
+                    
+                    <div className="mb-4 sm:mb-0 pl-3">
+                      <p className="text-xs text-museum-paper/50 uppercase tracking-wider mb-1 flex items-center space-x-1">
+                        <User className="w-3 h-3" />
+                        <span>Created Campaign</span>
+                      </p>
+                      <p className="font-serif text-lg">{title}</p>
+                    </div>
+                  </motion.div>
+                ))}
+              </div>
+            ) : (
+              <p className="text-sm text-museum-text/50 italic">No original curation records found for this identity.</p>
             )}
           </motion.div>
         </div>

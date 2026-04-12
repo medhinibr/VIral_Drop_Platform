@@ -45,9 +45,9 @@ const CampaignCard = ({ campaign, onClaim, claiming, claimedCampaigns }) => {
               <span>Booking Opens</span>
               <span>Event Date</span>
             </div>
-            <div className="flex justify-between font-serif text-sm text-museum-dark">
-              <span>{new Date(campaign.startTime).toLocaleDateString()}</span>
-              <span>{campaign.eventDate ? new Date(campaign.eventDate).toLocaleDateString() : 'TBA'}</span>
+            <div className="flex justify-between font-serif text-[11px] text-museum-dark">
+              <span>{new Date(campaign.startTime).toLocaleString([], { dateStyle: 'short', timeStyle: 'short' })}</span>
+              <span>{campaign.eventDate ? new Date(campaign.eventDate).toLocaleString([], { dateStyle: 'short', timeStyle: 'short' }) : 'TBA'}</span>
             </div>
           </div>
           <div className="flex justify-between items-end border-b border-museum-dark/10 pb-4">

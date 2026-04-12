@@ -48,7 +48,7 @@ app.get("/test-campaign", async (req, res) => {
 });
 
 
-app.post("/create-campaign", async (req, res) => {
+app.post("/create-campaign", verifyUser, async (req, res) => {
     try {
         const { title, limit, startTime, eventDate } = req.body;
 
@@ -61,6 +61,7 @@ app.post("/create-campaign", async (req, res) => {
             limit,
             startTime,
             eventDate,
+            createdBy: req.user.uid,
         });
 
         res.send({

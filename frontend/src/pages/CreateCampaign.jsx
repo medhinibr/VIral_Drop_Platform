@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
+import { useAppContext } from '../context/AppContext';
 import { apiService } from '../services/api';
 import { Loader2, Plus, Calendar, Hash } from 'lucide-react';
 import { motion } from 'framer-motion';
@@ -15,6 +16,19 @@ const CreateCampaign = () => {
   const [error, setError] = useState(null);
   const [success, setSuccess] = useState(false);
   const navigate = useNavigate();
+  const { isAuthenticated } = useAppContext();
+
+  if (!isAuthenticated) {
+    return (
+      <div className="max-w-2xl mx-auto px-6 py-32 w-full flex flex-col items-center justify-center text-center animate-fade-in">
+        <h2 className="text-4xl mb-4 font-serif text-museum-dark">Identity Verification Required</h2>
+        <p className="text-museum-text/60 max-w-md mx-auto mb-8">
+          Only registered platform curators can draft new exhibition events into the gallery.
+        </p>
+        <Link to="/auth" className="btn-museum">Authenticate Now</Link>
+      </div>
+    );
+  }
 
   const handleChange = (e) => {
     setFormData({

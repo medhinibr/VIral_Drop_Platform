@@ -25,7 +25,7 @@
   
   /* Input Fields */
   .input-museum {
-    @apply w-full bg-transparent border-b border-museum-dark/20 text-museum-text px-1 py-2 focus:outline-none focus:border-museum-dark transition-colors duration-300 placeholder:text-museum-text/40;
+    @apply w-full bg-white border border-museum-dark/20 text-museum-dark px-3 py-3 shadow-[inset_0_2px_4px_rgba(0,0,0,0.05)] focus:outline-none focus:border-museum-accent focus:ring-1 focus:ring-museum-accent transition-all duration-300 placeholder:text-museum-dark/40;
   }
   
   /* Prevent browser autofill from overwriting input colors and breaking contrast */
