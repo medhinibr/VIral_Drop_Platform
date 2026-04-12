@@ -32,6 +32,7 @@ if (process.env.MONGO_URI) {
 
 
 const Campaign = require("./models/Campaign");
+const verifyUser = require("./middleware/auth");
 
 app.get("/test-campaign", async (req, res) => {
     try {
@@ -86,7 +87,6 @@ app.get("/active-campaign", async (req, res) => {
 });
 
 
-const verifyUser = require("./middleware/auth");
 
 app.post("/claim", verifyUser, async (req, res) => {
     try {
