@@ -74,17 +74,10 @@ app.post("/create-campaign", async (req, res) => {
 
 app.get("/active-campaign", async (req, res) => {
     try {
-        const currentTime = new Date(); // ✅ FIX
+        // Return all campaigns so they are reflected in the frontend 
+        const campaigns = await Campaign.find({}).sort({ startTime: -1 });
 
-        const campaign = await Campaign.findOne({
-            startTime: { $lte: currentTime },
-        }).sort({ startTime: -1 });
-
-        if (!campaign) {
-            return res.send("No active campaign");
-        }
-
-        res.send(campaign);
+        res.json(campaigns);
     } catch (error) {
         res.status(500).send(error.message);
     }
@@ -159,7 +152,7 @@ const path = require("path");
 app.use(express.static(path.join(__dirname, "frontend", "dist")));
 
 // Catch-all route for React Router (Single Page Application)
-app.get("*", (req, res) => {
+app.get("(.*)", (req, res) => {
     res.sendFile(path.join(__dirname, "frontend", "dist", "index.html"));
 });
 
