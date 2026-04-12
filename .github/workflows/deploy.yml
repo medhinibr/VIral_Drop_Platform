@@ -6,23 +6,14 @@ on:
       - main
 
 jobs:
-  build:
+  deploy-to-render:
     runs-on: ubuntu-latest
-
     steps:
-      - name: Checkout Code
-        uses: actions/checkout@v3
+      - name: Trigger Backend Render Deploy Hook
+        run: curl -X POST ${{ secrets.RENDER_BACKEND_DEPLOY_HOOK_URL }}
 
-      - name: Setup Node.js
-        uses: actions/setup-node@v3
-        with:
-          node-version: 18
-
-      - name: Install Dependencies
-        run: npm install
-
-      - name: Run Build (optional)
-        run: echo "No build step"
+      - name: Trigger Frontend Render Deploy Hook
+        run: curl -X POST ${{ secrets.RENDER_FRONTEND_DEPLOY_HOOK_URL }}
 
       - name: Success Message
-        run: echo "Build Successful 🚀"
+        run: echo "Render Deployment Hooks Triggered 🚀"

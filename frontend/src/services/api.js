@@ -1,8 +1,9 @@
 import axios from 'axios';
 import { auth } from '../firebase-config';
 
-// Base URL can be configured using env variables
-const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000';
+// Base URL configured via environment variables
+// VITE_API_URL must be injected during the build step in Render / GitHub Actions
+const API_BASE_URL = import.meta.env.VITE_API_URL || 'https://your-render-backend-url.onrender.com';
 
 const api = axios.create({
   baseURL: API_BASE_URL,
