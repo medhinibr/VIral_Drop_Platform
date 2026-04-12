@@ -9,11 +9,8 @@ jobs:
   deploy-to-render:
     runs-on: ubuntu-latest
     steps:
-      - name: Trigger Backend Render Deploy Hook
-        run: curl -X POST ${{ secrets.RENDER_BACKEND_DEPLOY_HOOK_URL }}
-
-      - name: Trigger Frontend Render Deploy Hook
-        run: curl -X POST ${{ secrets.RENDER_FRONTEND_DEPLOY_HOOK_URL }}
+      - name: Trigger Render Deploy Hook
+        run: curl -X POST ${{ secrets.RENDER_DEPLOY_HOOK_URL }}
 
       - name: Success Message
-        run: echo "Render Deployment Hooks Triggered 🚀"
+        run: echo "Render Deployment Hook Triggered 🚀"

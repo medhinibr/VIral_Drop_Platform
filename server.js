@@ -6,9 +6,7 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-app.get("/", (req, res) => {
-    res.send("Backend is LIVE 🚀");
-});
+// Removed temporary root route to allow React's index.html to serve at /
 
 const PORT = process.env.PORT || 3000;
 
@@ -151,6 +149,16 @@ app.post("/upload", upload.single("file"), async (req, res) => {
     } catch (error) {
         res.status(500).send(error.message);
     }
+});
+
+// Serve Frontend statically from the backend
+const path = require("path");
+
+app.use(express.static(path.join(__dirname, "frontend", "dist")));
+
+// Catch-all route for React Router (Single Page Application)
+app.get("*", (req, res) => {
+    res.sendFile(path.join(__dirname, "frontend", "dist", "index.html"));
 });
 
 
