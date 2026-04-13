@@ -185,7 +185,7 @@ const Profile = () => {
                     <div className="mb-4 sm:mb-0 pl-3">
                       <p className="text-xs text-museum-text/50 uppercase tracking-wider mb-1 flex items-center space-x-1">
                         <ImageIcon className="w-3 h-3" />
-                        <span>Reserved {item.count > 1 ? `${item.count} Entries` : 'Entry'}</span>
+                        <span>Reserved {item.count} {item.count > 1 ? 'Entries' : 'Entry'}</span>
                       </p>
                       <p className="font-serif text-lg text-museum-dark">{item.title}</p>
                     </div>

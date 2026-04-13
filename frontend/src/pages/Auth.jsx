@@ -94,7 +94,7 @@ const Auth = () => {
         <h1 className="text-[20vw] font-serif leading-none whitespace-nowrap text-museum-dark">EXHIBITS</h1>
       </div>
 
-      <div className="relative w-full max-w-md h-[550px] perspective-[1000px]">
+      <div className="relative w-full max-w-md h-[680px] perspective-[1000px]">
         <AnimatePresence initial={false} custom={direction}>
           {isLogin ? (
             <motion.div
