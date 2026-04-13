@@ -3,8 +3,8 @@ import { useAppContext } from '../context/AppContext';
 import { Link } from 'react-router-dom';
 import { apiService } from '../services/api';
 import UploadImage from '../components/UploadImage';
-import { User, Image as ImageIcon, MapPin, Calendar, Clock, Edit2, Check } from 'lucide-react';
-import { motion } from 'framer-motion';
+import { User, Image as ImageIcon, MapPin, Calendar, Clock, Edit2, Check, X, QrCode } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
 
 const Profile = () => {
   const { userId, userName, isAuthenticated, userPhoto, updateUserProfile } = useAppContext();
@@ -19,6 +19,8 @@ const Profile = () => {
   const [authoredEvents, setAuthoredEvents] = useState([]);
   const [isEditingName, setIsEditingName] = useState(false);
   const [editNameValue, setEditNameValue] = useState(userName);
+  const [selectedTicket, setSelectedTicket] = useState(null);
+  const [selectedCurated, setSelectedCurated] = useState(null);
 
   const handleEditName = async () => {
     if (isEditingName) {
@@ -45,7 +47,12 @@ const Profile = () => {
             title: c.title,
             count: c.claimedUsers.filter(u => u === userId).length
           }));
-        const authored = campaignsArray.filter(c => c.createdBy === userId).map(c => c.title);
+        const authored = campaignsArray.filter(c => c.createdBy === userId).map(c => ({
+          id: c._id,
+          title: c.title,
+          claimed: c.claimed || 0,
+          limit: c.limit
+        }));
         setClaimedEvents(claimedArray);
         setAuthoredEvents(authored);
       } catch (error) {
@@ -79,6 +86,106 @@ const Profile = () => {
 
   return (
     <div className="max-w-4xl mx-auto px-6 py-12 w-full">
+      <AnimatePresence>
+        {selectedTicket && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            onClick={() => setSelectedTicket(null)}
+            className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-museum-dark/60 backdrop-blur-sm"
+          >
+            <motion.div
+              initial={{ scale: 0.95, opacity: 0, y: 20 }}
+              animate={{ scale: 1, opacity: 1, y: 0 }}
+              exit={{ scale: 0.95, opacity: 0, y: 20 }}
+              onClick={(e) => e.stopPropagation()}
+              className="bg-museum-light w-full max-w-sm relative overflow-hidden shadow-2xl border border-museum-dark/20"
+            >
+              <button 
+                onClick={() => setSelectedTicket(null)}
+                className="absolute top-4 right-4 text-museum-dark/40 hover:text-museum-dark transition-colors z-10 cursor-pointer"
+              >
+                <X className="w-5 h-5" />
+              </button>
+              
+              <div className="p-8 text-center border-b border-museum-dark/10 bg-white">
+                <QrCode className="w-8 h-8 mx-auto mb-4 text-museum-dark" />
+                <h3 className="font-serif text-2xl text-museum-dark leading-tight mb-2">{selectedTicket.title}</h3>
+                <p className="text-xs uppercase tracking-widest text-museum-accent font-medium">Valid Entry Pass</p>
+              </div>
+              
+              <div className="p-8 flex flex-col items-center">
+                <div className="bg-white p-4 border border-museum-dark/10 shadow-sm mb-6 inline-block shrink-0">
+                  <img 
+                    src={`https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=${selectedTicket.id}-${userId}`} 
+                    alt="Admission QR Code" 
+                    className="w-40 h-40 object-cover"
+                  />
+                </div>
+                
+                <div className="w-full grid grid-cols-2 gap-4 text-left border-t border-museum-dark/10 pt-6">
+                  <div>
+                    <span className="block text-[10px] uppercase tracking-widest text-museum-text/50 mb-1">Quantity</span>
+                    <span className="font-serif text-lg text-museum-dark">{selectedTicket.count} {selectedTicket.count > 1 ? 'Admissions' : 'Admission'}</span>
+                  </div>
+                  <div>
+                    <span className="block text-[10px] uppercase tracking-widest text-museum-text/50 mb-1">Holder ID</span>
+                    <span className="font-mono text-xs text-museum-dark truncate w-full inline-block" title={userId}>{userId.substring(0, 8)}...</span>
+                  </div>
+                </div>
+              </div>
+              
+              <div className="bg-museum-dark text-museum-paper py-4 text-center text-xs tracking-widest uppercase shadow-inner">
+                Present at Gallery Entrance
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+
+        {selectedCurated && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            onClick={() => setSelectedCurated(null)}
+            className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-museum-dark/90 backdrop-blur-md"
+          >
+            <motion.div
+              initial={{ scale: 0.95, opacity: 0, y: 20 }}
+              animate={{ scale: 1, opacity: 1, y: 0 }}
+              exit={{ scale: 0.95, opacity: 0, y: 20 }}
+              onClick={(e) => e.stopPropagation()}
+              className="bg-museum-dark text-museum-paper w-full max-w-sm relative shadow-2xl p-8 border border-museum-paper/10"
+            >
+              <button 
+                onClick={() => setSelectedCurated(null)}
+                className="absolute top-4 right-4 text-museum-paper/40 hover:text-museum-paper transition-colors cursor-pointer"
+              >
+                <X className="w-5 h-5" />
+              </button>
+              
+              <div className="text-center mb-8">
+                <User className="w-8 h-8 mx-auto mb-4 text-museum-paper/50" />
+                <h3 className="font-serif text-2xl leading-tight mb-2">{selectedCurated.title}</h3>
+                <p className="text-xs uppercase tracking-widest text-museum-accent font-medium">Curator Statistics</p>
+              </div>
+              
+              <div className="grid grid-cols-2 gap-px bg-museum-paper/10">
+                <div className="bg-museum-dark p-6 text-center">
+                  <span className="block text-[10px] uppercase tracking-widest text-museum-paper/50 mb-2">Claimed</span>
+                  <span className="font-serif text-3xl text-museum-paper">{selectedCurated.claimed}</span>
+                </div>
+                <div className="bg-museum-dark p-6 text-center">
+                  <span className="block text-[10px] uppercase tracking-widest text-museum-paper/50 mb-2">Capacity</span>
+                  <span className="font-serif text-3xl text-museum-paper">{selectedCurated.limit}</span>
+                </div>
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
       <div className="mb-12">
         <h1 className="text-5xl mb-4">Member <span className="font-light italic text-museum-text/50">Dossier</span></h1>
         <p className="text-museum-text/60 font-light text-lg">
@@ -177,8 +284,9 @@ const Profile = () => {
                     initial={{ opacity: 0, x: 20 }}
                     animate={{ opacity: 1, x: 0 }}
                     transition={{ delay: 0.1 * index }}
-                    key={index} 
-                    className="group bg-white border border-museum-dark/10 p-5 flex flex-col sm:flex-row justify-between items-start sm:items-center hover:shadow-md hover:border-museum-dark/30 transition-all duration-300 relative overflow-hidden"
+                    key={index}
+                    onClick={() => setSelectedTicket(item)}
+                    className="group bg-white border border-museum-dark/10 p-5 flex flex-col sm:flex-row justify-between items-start sm:items-center hover:shadow-md hover:border-museum-dark/30 transition-all duration-300 relative overflow-hidden cursor-pointer w-full"
                   >
                     <div className="absolute left-0 top-0 bottom-0 w-1 bg-museum-accent scale-y-0 group-hover:scale-y-100 transition-transform duration-300 origin-top"></div>
                     
@@ -214,13 +322,14 @@ const Profile = () => {
             
             {authoredEvents.length > 0 ? (
               <div className="space-y-4">
-                {authoredEvents.map((title, index) => (
+                {authoredEvents.map((item, index) => (
                   <motion.div 
                     initial={{ opacity: 0, x: 20 }}
                     animate={{ opacity: 1, x: 0 }}
                     transition={{ delay: 0.1 * index }}
-                    key={`auth-${index}`} 
-                    className="group bg-museum-dark text-museum-paper border border-museum-dark/10 p-5 flex flex-col sm:flex-row justify-between items-start sm:items-center hover:shadow-md transition-all duration-300 relative overflow-hidden"
+                    key={`auth-${index}`}
+                    onClick={() => setSelectedCurated(item)}
+                    className="group bg-museum-dark text-museum-paper border border-museum-dark/10 p-5 flex flex-col sm:flex-row justify-between items-start sm:items-center hover:shadow-md hover:bg-museum-dark/90 transition-all duration-300 relative overflow-hidden cursor-pointer"
                   >
                     <div className="absolute left-0 top-0 bottom-0 w-1 bg-museum-accent scale-y-0 group-hover:scale-y-100 transition-transform duration-300 origin-top"></div>
                     
@@ -229,7 +338,7 @@ const Profile = () => {
                         <User className="w-3 h-3" />
                         <span>Created Campaign</span>
                       </p>
-                      <p className="font-serif text-lg">{title}</p>
+                      <p className="font-serif text-lg">{item.title}</p>
                     </div>
                   </motion.div>
                 ))}
