@@ -103,9 +103,7 @@ app.post("/claim", verifyUser, async (req, res) => {
             return res.status(400).send("Campaign not started yet");
         }
 
-        if (campaign.claimedUsers.includes(userId)) {
-            return res.status(400).send("Already claimed");
-        }
+
 
         if (campaign.claimed >= campaign.limit) {
             return res.status(400).send("Sold Out");

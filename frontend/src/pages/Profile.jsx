@@ -7,8 +7,14 @@ import { User, Image as ImageIcon, MapPin, Calendar, Clock } from 'lucide-react'
 import { motion } from 'framer-motion';
 
 const Profile = () => {
-  const { userId, userName, isAuthenticated } = useAppContext();
-  const [profileImage, setProfileImage] = useState(null);
+  const { userId, userName, isAuthenticated, userPhoto, updateUserProfile } = useAppContext();
+  const [profileImage, setProfileImage] = useState(userPhoto || null);
+
+  useEffect(() => {
+    if (userPhoto) {
+      setProfileImage(userPhoto);
+    }
+  }, [userPhoto]);
   const [claimedEvents, setClaimedEvents] = useState([]);
   const [authoredEvents, setAuthoredEvents] = useState([]);
 
@@ -31,9 +37,11 @@ const Profile = () => {
     }
   }, [userId]);
 
-  const handleUploadSuccess = (imageUrl) => {
+  const handleUploadSuccess = async (imageUrl) => {
     setProfileImage(imageUrl);
-    // Profile images are now strictly session-based until a backend schema supports it
+    if (updateUserProfile) {
+      await updateUserProfile(imageUrl);
+    }
   };
 
   if (!isAuthenticated) {
