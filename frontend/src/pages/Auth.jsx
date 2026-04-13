@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Landmark, UserPlus, LogIn } from 'lucide-react';
-import { signInWithEmailAndPassword, createUserWithEmailAndPassword, updateProfile } from 'firebase/auth';
+import { signInWithEmailAndPassword, createUserWithEmailAndPassword, updateProfile, sendPasswordResetEmail, GoogleAuthProvider, signInWithPopup } from 'firebase/auth';
 import { auth } from '../firebase-config';
 
 const Auth = () => {
@@ -10,7 +10,31 @@ const Auth = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [fullName, setFullName] = useState('');
+  const [errorMsg, setErrorMsg] = useState('');
   const navigate = useNavigate();
+
+  const handleGoogleSignIn = async () => {
+    try {
+      const provider = new GoogleAuthProvider();
+      await signInWithPopup(auth, provider);
+      navigate('/');
+    } catch (error) {
+      setErrorMsg("Google Sign-in failed.");
+    }
+  };
+
+  const handleResetPassword = async () => {
+    if (!email) {
+      setErrorMsg("Please enter your email address to reset password.");
+      return;
+    }
+    try {
+      await sendPasswordResetEmail(auth, email);
+      setErrorMsg("Password reset link sent to your email.");
+    } catch (error) {
+      setErrorMsg("Failed to send reset email.");
+    }
+  };
 
   const handleAuth = async (e) => {
     e.preventDefault();
@@ -24,7 +48,13 @@ const Auth = () => {
       navigate('/');
     } catch (error) {
       console.error("Auth failed:", error);
-      alert("Authentication failed: " + error.message);
+      if (error.code === 'auth/invalid-credential' || error.code === 'auth/user-not-found' || error.code === 'auth/wrong-password') {
+        setErrorMsg('Invalid email or password.');
+      } else if (error.code === 'auth/email-already-in-use') {
+        setErrorMsg('Email is already registered.');
+      } else {
+        setErrorMsg('Authentication failed. Please try again.');
+      }
     }
   };
 
@@ -91,6 +121,12 @@ const Auth = () => {
                   Present your credentials
                 </p>
 
+                {errorMsg && (
+                  <div className="mb-6 p-3 bg-red-50 border border-red-100 text-red-600 text-sm text-center">
+                    {errorMsg}
+                  </div>
+                )}
+
                 <form onSubmit={handleAuth} className="space-y-6">
                   <div>
                     <label className="block text-xs font-semibold tracking-widest uppercase text-museum-dark/70 mb-2">
@@ -117,12 +153,32 @@ const Auth = () => {
                       className="input-museum"
                       placeholder="••••••••"
                     />
+                    <div className="flex justify-end mt-2">
+                      <button type="button" onClick={handleResetPassword} className="text-xs text-museum-text/60 hover:text-museum-dark underline underline-offset-2">
+                        Forgot Password?
+                      </button>
+                    </div>
                   </div>
                   <button type="submit" className="btn-museum w-full mt-8 group flex justify-center items-center">
                     <span>Enter Gallery</span>
                     <LogIn className="w-4 h-4 ml-2 opacity-0 group-hover:opacity-100 transition-opacity -ml-6 group-hover:ml-2" />
                   </button>
                 </form>
+
+                <div className="mt-6 flex items-center justify-between">
+                  <div className="h-px bg-museum-dark/10 flex-1"></div>
+                  <span className="px-4 text-xs tracking-widest text-museum-dark/40 uppercase">Or</span>
+                  <div className="h-px bg-museum-dark/10 flex-1"></div>
+                </div>
+
+                <button 
+                  type="button" 
+                  onClick={handleGoogleSignIn}
+                  className="w-full mt-6 py-3 border border-museum-dark/20 text-museum-dark font-medium text-sm tracking-wide uppercase hover:bg-museum-dark/5 transition-colors flex items-center justify-center"
+                >
+                  <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" className="w-5 h-5 mr-3" alt="Google" />
+                  Sign In with Google
+                </button>
               </div>
 
               <div className="text-center mt-6 pt-6 border-t border-museum-dark/10">
@@ -162,6 +218,12 @@ const Auth = () => {
                 <p className="text-center text-sm tracking-wider text-museum-paper/50 uppercase mb-8">
                   Join the exclusive archive
                 </p>
+
+                {errorMsg && (
+                  <div className="mb-6 p-3 bg-red-900/50 border border-red-500/30 text-red-100 text-sm text-center">
+                    {errorMsg}
+                  </div>
+                )}
 
                 <form onSubmit={handleAuth} className="space-y-6">
                   <div>
@@ -208,6 +270,21 @@ const Auth = () => {
                     <UserPlus className="w-4 h-4 ml-2 opacity-0 group-hover:opacity-100 transition-opacity -ml-6 group-hover:ml-2" />
                   </button>
                 </form>
+
+                <div className="mt-6 flex items-center justify-between">
+                  <div className="h-px bg-museum-paper/10 flex-1"></div>
+                  <span className="px-4 text-xs tracking-widest text-museum-paper/40 uppercase">Or</span>
+                  <div className="h-px bg-museum-paper/10 flex-1"></div>
+                </div>
+
+                <button 
+                  type="button" 
+                  onClick={handleGoogleSignIn}
+                  className="w-full mt-6 py-3 border border-museum-paper/20 text-museum-paper font-medium text-sm tracking-wide uppercase hover:bg-museum-paper/10 transition-colors flex items-center justify-center"
+                >
+                  <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" className="w-5 h-5 mr-3" alt="Google" />
+                  Sign Up with Google
+                </button>
               </div>
 
               <div className="text-center mt-6 pt-6 border-t border-museum-paper/10">

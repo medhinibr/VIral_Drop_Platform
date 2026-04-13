@@ -39,11 +39,12 @@ export const AppProvider = ({ children }) => {
     }
   };
 
-  const updateUserProfile = async (photoURL) => {
+  const updateUserProfile = async (updates) => {
     if (auth.currentUser) {
       try {
-        await updateProfile(auth.currentUser, { photoURL });
-        setUserPhoto(photoURL);
+        await updateProfile(auth.currentUser, updates);
+        if (updates.photoURL !== undefined) setUserPhoto(updates.photoURL);
+        if (updates.displayName !== undefined) setUserName(updates.displayName || 'Collector');
       } catch (error) {
         console.error('Update profile error:', error);
       }

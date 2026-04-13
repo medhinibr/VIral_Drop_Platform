@@ -3,7 +3,7 @@ import { useAppContext } from '../context/AppContext';
 import { Link } from 'react-router-dom';
 import { apiService } from '../services/api';
 import UploadImage from '../components/UploadImage';
-import { User, Image as ImageIcon, MapPin, Calendar, Clock } from 'lucide-react';
+import { User, Image as ImageIcon, MapPin, Calendar, Clock, Edit2, Check } from 'lucide-react';
 import { motion } from 'framer-motion';
 
 const Profile = () => {
@@ -17,15 +17,36 @@ const Profile = () => {
   }, [userPhoto]);
   const [claimedEvents, setClaimedEvents] = useState([]);
   const [authoredEvents, setAuthoredEvents] = useState([]);
+  const [isEditingName, setIsEditingName] = useState(false);
+  const [editNameValue, setEditNameValue] = useState(userName);
+
+  const handleEditName = async () => {
+    if (isEditingName) {
+      if (editNameValue.trim() !== '' && editNameValue !== userName) {
+        if (updateUserProfile) {
+          await updateUserProfile({ displayName: editNameValue });
+        }
+      }
+    } else {
+      setEditNameValue(userName);
+    }
+    setIsEditingName(!isEditingName);
+  };
 
   useEffect(() => {
     const fetchProfileData = async () => {
       try {
         const data = await apiService.getActiveCampaign();
         const campaignsArray = Array.isArray(data) ? data : (data ? [data] : []);
-        const claimed = campaignsArray.filter(c => c.claimedUsers?.includes(userId)).map(c => c._id);
+        const claimedArray = campaignsArray
+          .filter(c => c.claimedUsers?.includes(userId))
+          .map(c => ({
+            id: c._id,
+            title: c.title,
+            count: c.claimedUsers.filter(u => u === userId).length
+          }));
         const authored = campaignsArray.filter(c => c.createdBy === userId).map(c => c.title);
-        setClaimedEvents(claimed);
+        setClaimedEvents(claimedArray);
         setAuthoredEvents(authored);
       } catch (error) {
         console.error("Failed to fetch profile data", error);
@@ -89,9 +110,25 @@ const Profile = () => {
             </div>
             
             <div className="p-6 bg-museum-light">
-              <h3 className="font-serif text-xl mb-1 truncate text-museum-dark" title={userName}>
-                {userName}
-              </h3>
+              <div className="flex items-center justify-between mb-1">
+                {isEditingName ? (
+                  <input
+                    type="text"
+                    value={editNameValue}
+                    onChange={(e) => setEditNameValue(e.target.value)}
+                    className="font-serif text-xl bg-transparent border-b border-museum-dark/30 text-museum-dark focus:outline-none focus:border-museum-dark w-full mr-3"
+                    autoFocus
+                    onKeyDown={(e) => e.key === 'Enter' && handleEditName()}
+                  />
+                ) : (
+                  <h3 className="font-serif text-xl truncate text-museum-dark" title={userName}>
+                    {userName}
+                  </h3>
+                )}
+                <button onClick={handleEditName} className="text-museum-dark/40 hover:text-museum-dark transition-colors shrink-0">
+                  {isEditingName ? <Check className="w-5 h-5 text-museum-accent" /> : <Edit2 className="w-4 h-4" />}
+                </button>
+              </div>
               <p className="text-xs uppercase tracking-widest text-museum-accent font-medium mb-6">
                 Premium Member
               </p>
@@ -135,7 +172,7 @@ const Profile = () => {
             
             {claimedEvents.length > 0 ? (
               <div className="space-y-4">
-                {claimedEvents.map((id, index) => (
+                {claimedEvents.map((item, index) => (
                   <motion.div 
                     initial={{ opacity: 0, x: 20 }}
                     animate={{ opacity: 1, x: 0 }}
@@ -148,9 +185,9 @@ const Profile = () => {
                     <div className="mb-4 sm:mb-0 pl-3">
                       <p className="text-xs text-museum-text/50 uppercase tracking-wider mb-1 flex items-center space-x-1">
                         <ImageIcon className="w-3 h-3" />
-                        <span>Exhibition ID</span>
+                        <span>Reserved {item.count > 1 ? `${item.count} Entries` : 'Entry'}</span>
                       </p>
-                      <p className="font-mono text-sm text-museum-dark">{id}</p>
+                      <p className="font-serif text-lg text-museum-dark">{item.title}</p>
                     </div>
                     
                     <div className="flex items-center space-x-2 text-xs uppercase tracking-widest px-3 py-1 bg-blue-50 text-blue-800 border border-blue-100">
