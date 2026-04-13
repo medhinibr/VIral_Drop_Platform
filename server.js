@@ -93,26 +93,33 @@ app.post("/claim", verifyUser, async (req, res) => {
         const { campaignId, userName } = req.body;
         const userId = req.user.uid; // ✅ real user
 
-        const campaign = await Campaign.findById(campaignId);
+        const campaign = await Campaign.findOneAndUpdate(
+            { 
+                _id: campaignId,
+                $expr: { $lt: ["$claimed", "$limit"] },
+                startTime: { $lte: new Date() }
+            },
+            { 
+                $inc: { claimed: 1 },
+                $push: { claimedUsers: `${userId}|${userName || 'Collector'}` }
+            },
+            { new: true }
+        );
 
         if (!campaign) {
-            return res.status(404).send("Campaign not found");
+            // Fallback validation mapping to return the exact deterministic reason for transaction failure
+            const checkCampaign = await Campaign.findById(campaignId);
+            if (!checkCampaign) {
+                return res.status(404).send("Campaign not found");
+            }
+            if (new Date() < new Date(checkCampaign.startTime)) {
+                return res.status(400).send("Campaign not started yet");
+            }
+            if (checkCampaign.claimed >= checkCampaign.limit) {
+                return res.status(400).send("Sold Out");
+            }
+            return res.status(400).send("Reservation transaction failed due to scale contention.");
         }
-
-        if (new Date() < new Date(campaign.startTime)) {
-            return res.status(400).send("Campaign not started yet");
-        }
-
-
-
-        if (campaign.claimed >= campaign.limit) {
-            return res.status(400).send("Sold Out");
-        }
-
-        campaign.claimed += 1;
-        campaign.claimedUsers.push(`${userId}|${userName || 'Collector'}`);
-
-        await campaign.save();
 
         res.send("Claim successful 🎉");
     } catch (error) {
