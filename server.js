@@ -90,7 +90,7 @@ app.get("/active-campaign", async (req, res) => {
 
 app.post("/claim", verifyUser, async (req, res) => {
     try {
-        const campaignId = req.body.campaignId;
+        const { campaignId, userName } = req.body;
         const userId = req.user.uid; // ✅ real user
 
         const campaign = await Campaign.findById(campaignId);
@@ -110,7 +110,7 @@ app.post("/claim", verifyUser, async (req, res) => {
         }
 
         campaign.claimed += 1;
-        campaign.claimedUsers.push(userId);
+        campaign.claimedUsers.push(`${userId}|${userName || 'Collector'}`);
 
         await campaign.save();
 

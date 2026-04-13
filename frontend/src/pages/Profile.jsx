@@ -41,11 +41,11 @@ const Profile = () => {
         const data = await apiService.getActiveCampaign();
         const campaignsArray = Array.isArray(data) ? data : (data ? [data] : []);
         const claimedArray = campaignsArray
-          .filter(c => c.claimedUsers?.includes(userId))
+          .filter(c => c.claimedUsers?.some(u => u === userId || String(u).startsWith(`${userId}|`)))
           .map(c => ({
             id: c._id,
             title: c.title,
-            count: c.claimedUsers.filter(u => u === userId).length
+            count: c.claimedUsers.filter(u => u === userId || String(u).startsWith(`${userId}|`)).length
           }));
         const authored = campaignsArray.filter(c => c.createdBy === userId).map(c => ({
           id: c._id,
@@ -118,7 +118,7 @@ const Profile = () => {
               <div className="p-8 flex flex-col items-center">
                 <div className="bg-white p-4 border border-museum-dark/10 shadow-sm mb-6 inline-block shrink-0">
                   <img 
-                    src={`https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=${selectedTicket.id}-${userId}`} 
+                    src={`https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=${encodeURIComponent(window.location.origin + '/profile')}`} 
                     alt="Admission QR Code" 
                     className="w-40 h-40 object-cover"
                   />
@@ -130,8 +130,8 @@ const Profile = () => {
                     <span className="font-serif text-lg text-museum-dark">{selectedTicket.count} {selectedTicket.count > 1 ? 'Admissions' : 'Admission'}</span>
                   </div>
                   <div>
-                    <span className="block text-[10px] uppercase tracking-widest text-museum-text/50 mb-1">Holder ID</span>
-                    <span className="font-mono text-xs text-museum-dark truncate w-full inline-block" title={userId}>{userId.substring(0, 8)}...</span>
+                    <span className="block text-[10px] uppercase tracking-widest text-museum-text/50 mb-1">Holder Name</span>
+                    <span className="font-serif text-sm text-museum-dark truncate w-full inline-block" title={userName}>{userName}</span>
                   </div>
                 </div>
               </div>

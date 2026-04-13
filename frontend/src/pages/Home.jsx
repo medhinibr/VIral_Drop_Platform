@@ -10,7 +10,7 @@ const Home = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [claiming, setClaiming] = useState(null);
-  const { userId, isAuthenticated } = useAppContext();
+  const { userId, userName, isAuthenticated } = useAppContext();
   const [notification, setNotification] = useState(null);
 
   const fetchCampaigns = async () => {
@@ -47,7 +47,7 @@ const Home = () => {
 
     try {
       setClaiming(campaignId);
-      await apiService.claimSlot({ campaignId });
+      await apiService.claimSlot({ campaignId, userName });
             
       showNotification('Reservation successful. Check your profile for details.');
       fetchCampaigns(); // Refresh count
