@@ -90,7 +90,7 @@ const Auth = () => {
   return (
     <div className="flex-grow flex items-center justify-center py-12 px-4 md:px-0 relative overflow-hidden bg-museum-light min-h-[80vh]">
       {/* Background Decorative Text */}
-      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full flex justify-center pointer-events-none opacity-5 select-none overflow-hidden">
+      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full flex justify-center pointer-events-none opacity-5 select-none overflow-hidden hidden sm:flex">
         <h1 className="text-[20vw] font-serif leading-none whitespace-nowrap text-museum-dark">EXHIBITS</h1>
       </div>
 
@@ -110,7 +110,7 @@ const Auth = () => {
                 rotateY: { duration: 0.4 },
                 scale: { duration: 0.4 }
               }}
-              className="absolute inset-0 card-museum bg-white shadow-2xl flex flex-col justify-between"
+              className="absolute inset-x-0 inset-y-0 sm:inset-0 card-museum bg-white shadow-2xl flex flex-col justify-between p-6 sm:p-8"
             >
               <div>
                 <div className="flex justify-center mb-8">
@@ -208,7 +208,7 @@ const Auth = () => {
                 rotateY: { duration: 0.4 },
                 scale: { duration: 0.4 }
               }}
-              className="absolute inset-0 card-museum bg-museum-dark text-museum-paper shadow-2xl flex flex-col justify-between"
+              className="absolute inset-x-0 inset-y-0 sm:inset-0 card-museum bg-museum-dark text-museum-paper shadow-2xl flex flex-col justify-between p-6 sm:p-8"
             >
               <div>
                 <div className="flex justify-center mb-8">

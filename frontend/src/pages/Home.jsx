@@ -79,9 +79,9 @@ const Home = () => {
         )}
       </AnimatePresence>
 
-      <div className="mb-16">
-        <h1 className="text-6xl md:text-7xl mb-4">Featured <br/><span className="text-museum-accent italic font-light">Collections</span></h1>
-        <p className="text-museum-text/70 max-w-lg font-light text-lg">
+      <div className="mb-12 sm:mb-16 mt-4 sm:mt-0">
+        <h1 className="text-4xl sm:text-6xl md:text-7xl mb-4 leading-tight">Featured <br/><span className="text-museum-accent italic font-light">Collections</span></h1>
+        <p className="text-museum-text/70 max-w-lg font-light text-base sm:text-lg">
           Discover exclusive, limited-entry exhibitions. Reserve your access before the gallery reaches full capacity.
         </p>
       </div>
