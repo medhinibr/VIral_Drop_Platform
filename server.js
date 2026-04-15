@@ -1,6 +1,5 @@
 const cluster = require("cluster");
 const os = require("os");
-
 // === SCALABILITY TRICK: LAUNCH A CLUSTER OF SERVERS (1 PER CPU CORE) ===
 if (cluster.isPrimary) {
     const numCPUs = os.cpus().length;
@@ -14,7 +13,7 @@ if (cluster.isPrimary) {
 
     // Auto-restart workers if they crash
     cluster.on("exit", (worker, code, signal) => {
-        console.warn(`⚠️ Worker ${worker.process.pid} dropped. Spinning up a replacement immediately!`);
+        console.log(`⚠️ Worker ${worker.process.pid} dropped. Spinning up a replacement immediately!`);
         cluster.fork();
     });
 
@@ -52,7 +51,7 @@ if (cluster.isPrimary) {
                 minPoolSize: 20   // Keep connections warm
             })
             .then(() => console.log(`[Worker ${process.pid}] Database connected 🚀`))
-            .catch((err) => console.error("Database connection failed", err));
+            .catch((err) => console.log(err));
     } else {
         console.warn("WARNING: MONGO_URI is not defined. MongoDB will not be connected.");
     }
@@ -71,7 +70,6 @@ if (cluster.isPrimary) {
 
             res.send(newCampaign);
         } catch (error) {
-            console.error(error);
             res.status(500).send(error.message);
         }
     });
@@ -98,7 +96,6 @@ if (cluster.isPrimary) {
                 campaign,
             });
         } catch (error) {
-            console.error(error);
             res.status(500).send(error.message);
         }
     });
@@ -111,7 +108,6 @@ if (cluster.isPrimary) {
 
             res.json(campaigns);
         } catch (error) {
-            console.error(error);
             res.status(500).send(error.message);
         }
     });
@@ -153,7 +149,6 @@ if (cluster.isPrimary) {
 
             res.send("Claim successful 🎉");
         } catch (error) {
-            console.error(error);
             res.status(500).send(error.message);
         }
     });
@@ -180,7 +175,6 @@ if (cluster.isPrimary) {
 
             streamifier.createReadStream(req.file.buffer).pipe(stream);
         } catch (error) {
-            console.error(error);
             res.status(500).send(error.message);
         }
     });
