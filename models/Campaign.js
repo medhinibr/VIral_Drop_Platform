@@ -37,6 +37,6 @@ const campaignSchema = new mongoose.Schema({
 
 });
 
-module.exports = mongoose.model("Campaign", campaignSchema);.
+module.exports = mongoose.model("Campaign", campaignSchema);
 
 
