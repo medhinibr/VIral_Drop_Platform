@@ -68,7 +68,7 @@ const Profile = () => {
   const handleUploadSuccess = async (imageUrl) => {
     setProfileImage(imageUrl);
     if (updateUserProfile) {
-      await updateUserProfile(imageUrl);
+      await updateUserProfile({ photoURL: imageUrl });
     }
   };
 
